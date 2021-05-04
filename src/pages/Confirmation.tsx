@@ -1,17 +1,36 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/core";
+import { StyleSheet, Text, View } from "react-native";
 import colors from "../../styles/colors";
 import fonts from "../../styles/fonts";
 import { Button } from "../components/Button";
+
+interface Params {
+    title: string;
+    subtitle: string;
+    buttonTitle: string;
+    icon: "smile" | "hug";
+    nextScreen: "string";
+}
+
+const emojis = {
+    smile: ":)",
+    hug: ":D",
+};
+
 export function Confirmation() {
+    const navigation = useNavigation();
+    const routes = useRoute();
+
+    const { buttonTitle, icon, nextScreen, subtitle, title } = routes.params as Params;
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.emoji}>{":)"}</Text>
-                <Text style={styles.title}>Prontinho</Text>
-                <Text style={styles.subtitle}>Agora vamos começar a cuidar das suas plantinhas com muito carinho!</Text>
+                <Text style={styles.emoji}>{emojis[icon]}</Text>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.subtitle}>{subtitle}</Text>
                 <View style={styles.fotter}>
-                    <Button title="Continuar" />
+                    <Button title={buttonTitle} onPress={() => navigation.navigate(nextScreen)} />
                 </View>
             </View>
         </View>

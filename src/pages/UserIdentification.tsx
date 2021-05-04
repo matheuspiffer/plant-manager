@@ -8,11 +8,13 @@ import {
     Platform,
     TouchableNativeFeedback,
     Keyboard,
+    Alert,
 } from "react-native";
-import colors from "../../styles/colors";
-import fonts from "../../styles/fonts";
 import { Button } from "../components/Button";
 import { useNavigation } from "@react-navigation/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import colors from "../../styles/colors";
+import fonts from "../../styles/fonts";
 
 export function UserIdentification() {
     const [isFocused, setIsfocused] = useState(false);
@@ -20,6 +22,20 @@ export function UserIdentification() {
     const nagivation = useNavigation();
     function changeHandler(event: string) {
         setName(event);
+    }
+
+    async function handleSubmit() {
+        if (!name) {
+            return Alert.alert("Por favor, digite o seu nome");
+        }
+        await AsyncStorage.setItem("@plantmanager:user", name);
+        nagivation.navigate("Confirmation", {
+            title: "Prontinho",
+            subtitle: "Agora vamos começar a cuidar das suas plantinhas com muito carinho",
+            buttonTitle: "Começar",
+            icon: "smile",
+            nextScreen: "PlantSelect",
+        });
     }
     return (
         <View style={styles.container}>
@@ -39,13 +55,7 @@ export function UserIdentification() {
                                 onBlur={() => setIsfocused(false)}
                             />
                             <View style={styles.footer}>
-                                <Button
-                                    title="Confirmar"
-                                    disabled={!!!name}
-                                    onPress={() => {
-                                        nagivation.navigate("Confirmation");
-                                    }}
-                                />
+                                <Button title="Confirmar" onPress={handleSubmit} />
                             </View>
                         </View>
                     </View>
